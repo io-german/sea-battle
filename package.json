@@ -11,6 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "gulp": "^3.9.0"
+    "gulp": "^3.9.0",
+    "gulp-cssnext": "^1.0.1",
+    "gulp-webpack": "^1.5.0"
   }
 }
