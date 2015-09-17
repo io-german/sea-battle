@@ -11,15 +11,25 @@ var webpackConfig = {
     filename: 'bundle.js'
   },
   module: {
-    loaders: [ {
-      test: /\.js$/,
-      loader: 'babel-loader'
-    } ]
+    loaders: [
+      {
+        test: /\.js$/,
+        loader: 'babel-loader'
+      },
+      {
+        test: /\.js$/,
+        loader: 'eslint-loader',
+        exclude: 'node_modules|test'
+      }
+    ]
+  },
+  eslint: {
+    configPath: './.eslintrc'
   }
 };
 
 gulp.task('clean', function (callback) {
-  gulp.src(['public/javascripts/bundle.js', 'public/stylesheets/bundle.css'])
+  gulp.src([ 'public/javascripts/bundle.js', 'public/stylesheets/bundle.css' ])
     .pipe(plumber())
     .pipe(clean());
 });
