@@ -1,6 +1,9 @@
+require('babel/register');
+
 var gulp    = require('gulp'),
-    less    = require('gulp-less'),
     clean   = require('gulp-clean'),
+    less    = require('gulp-less'),
+    mocha   = require('gulp-mocha'),
     plumber = require('gulp-plumber'),
     rename  = require('gulp-rename'),
     webpack = require('gulp-webpack');
@@ -47,6 +50,11 @@ gulp.task('css', function () {
     .pipe(less())
     .pipe(rename('bundle.css'))
     .pipe(gulp.dest('public/stylesheets/'))
+});
+
+gulp.task('test', function () {
+  return gulp.src('test/assets/javascripts/**/*_test.js')
+    .pipe(mocha({ reporter: 'nyan' }));
 });
 
 gulp.task('dist', function () {

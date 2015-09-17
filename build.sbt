@@ -30,12 +30,20 @@ beforeDistTask := {
   Process("gulp dist") !
 }
 
-dist <<= dist dependsOn beforeDistTask
-
 val assetsCleanup = TaskKey[Unit]("assets-cleanup")
 
 assetsCleanup := {
   Process("gulp clean") !
 }
 
+val jsTestsRun = TaskKey[Unit]("js-tests-run")
+
+jsTestsRun := {
+  Process("gulp test") !
+}
+
+dist <<= dist dependsOn beforeDistTask
+
 clean <<= clean dependsOn assetsCleanup
+
+(test in Test) <<= (test in Test) dependsOn jsTestsRun
