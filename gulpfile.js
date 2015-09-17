@@ -1,5 +1,5 @@
 var gulp    = require('gulp'),
-    cssnext = require('gulp-cssnext'),
+    less    = require('gulp-less'),
     clean   = require('gulp-clean'),
     plumber = require('gulp-plumber'),
     rename  = require('gulp-rename'),
@@ -28,7 +28,7 @@ var webpackConfig = {
   }
 };
 
-gulp.task('clean', function (callback) {
+gulp.task('clean', function () {
   gulp.src([ 'public/javascripts/bundle.js', 'public/stylesheets/bundle.css' ])
     .pipe(plumber())
     .pipe(clean());
@@ -42,9 +42,9 @@ gulp.task('js', function () {
 });
 
 gulp.task('css', function () {
-  return gulp.src('app/assets/stylesheets/main.css')
+  return gulp.src('app/assets/stylesheets/main.less')
     .pipe(plumber())
-    .pipe(cssnext())
+    .pipe(less())
     .pipe(rename('bundle.css'))
     .pipe(gulp.dest('public/stylesheets/'))
 });
