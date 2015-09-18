@@ -1,3 +1,4 @@
+/* eslint no-unused-vars: 0 */
 import Model from './model.js';
 import View from './view.js';
 
@@ -9,7 +10,7 @@ export default function () {
       own            = new Model(ownFieldView),
       rival          = new Model(rivalFieldView);
 
-  rivalField.addEventListener('click', function (e) {
+  rivalField.addEventListener('click', function () {
     console.log('click');
   });
-};
+}

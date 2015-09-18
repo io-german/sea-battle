@@ -1,5 +1,5 @@
 export default class {
-  constructor(view) {
+  constructor (view) {
     this.view = view;
 
     this.field = [];
@@ -8,7 +8,7 @@ export default class {
     }
   }
 
-  updateCell(row, column, value) {
+  updateCell (row, column, value) {
     this.field[row][column] = value;
     view.draw(this.field);
   }
