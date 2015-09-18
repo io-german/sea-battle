@@ -9,7 +9,7 @@ export default function () {
       own            = new Model(ownFieldView),
       rival          = new Model(rivalFieldView);
 
-  document.addEventListener('click', function (e) {
+  rivalField.addEventListener('click', function (e) {
     console.log('click');
   });
 };
