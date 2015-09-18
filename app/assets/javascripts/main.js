@@ -1,3 +1,3 @@
-import * as math from './math.js';
+import game_field from './game_field/main.js';
 
-'Hello. square(2) = ' + math.square(2);
+game_field();
