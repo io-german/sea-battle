@@ -13,4 +13,7 @@ export default function () {
   rivalField.addEventListener('click', function () {
     console.log('click');
   });
+
+  ownFieldView.draw();
+  rivalFieldView.draw();
 }
