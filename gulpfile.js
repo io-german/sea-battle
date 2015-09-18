@@ -60,3 +60,8 @@ gulp.task('test', function () {
 gulp.task('dist', function () {
   gulp.start('css', 'js');
 });
+
+gulp.task('watch', function () {
+  gulp.watch('app/assets/stylesheets/**/*.less', ['css']);
+  gulp.watch('app/assets/javascripts/**/*.js', ['js']);
+});
