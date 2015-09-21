@@ -9,8 +9,14 @@ export default class {
   draw (model) {
     var ctx = this.canvas.getContext('2d');
 
+    clear(ctx, this.canvas);
     drawMarkings(ctx);
+    drawShips(ctx, model);
   }
+}
+
+function clear (ctx, canvas) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 function drawMarkings (ctx) {
@@ -31,5 +37,20 @@ function drawMarkings (ctx) {
     ctx.moveTo(25 + 25 * i, 25);
     ctx.lineTo(25 + 25 * i, 725);
   }
+  ctx.stroke();
+}
+
+function drawShips (ctx, model) {
+  model && model.forEach(function (row, rowIndex) {
+    row.forEach(function (cell, colIndex) {
+      if (cell === 'wounded') {
+        ctx.moveTo(25 + 25 * rowIndex, 25 + 25 * colIndex);
+        ctx.lineTo(50 + 25 * rowIndex, 50 + 25 * colIndex);
+
+        ctx.moveTo(50 + 25 * rowIndex, 25 + 25 * colIndex);
+        ctx.lineTo(25 + 25 * rowIndex, 50 + 25 * colIndex);
+      }
+    });
+  });
   ctx.stroke();
 }

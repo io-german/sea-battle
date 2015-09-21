@@ -15,15 +15,15 @@ export default function () {
     document.getElementsByTagName('canvas'),
     (canvas) => canvas.addEventListener('click', callback));
 
-  function callback(e) {
+  function callback (e) {
     var target = e.target,
         targetRect = target.getBoundingClientRect(),
         targetPosition = { x: Math.ceil(targetRect.left), y: Math.ceil(targetRect.top) },
         clickPosition = { x: e.clientX - targetPosition.x, y: e.clientY - targetRect.top },
-        cell = { row: Math.floor(clickPosition.y / 25), col: getLetter(Math.floor(clickPosition.x / 25) - 1) };
+        cell = { row: Math.floor(clickPosition.y / 25) - 1, col: Math.floor(clickPosition.x / 25 - 1) };
 
-    if (cell.col && cell.row) {
-      console.log(cell.col + cell.row);
+    if (cell.col >= 0 && cell.row >= 0) {
+      own.updateCell(cell.col, cell.row, 'wounded');
     }
   }
 

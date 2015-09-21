@@ -10,6 +10,6 @@ export default class {
 
   updateCell (row, column, value) {
     this.field[row][column] = value;
-    view.draw(this.field);
+    this.view.draw(this.field);
   }
 }
