@@ -1,4 +1,5 @@
 /* eslint no-unused-vars: 0 */
+import getLetter from '../util/letters.js';
 
 export default class {
   constructor (canvas) {
@@ -13,12 +14,10 @@ export default class {
 }
 
 function drawMarkings (ctx) {
-  var letters = [ 'a', 'b', 'c', 'd', 'e', 'f', 'h', 'i', 'j', 'k' ];
-
   ctx.font = '25px serif';
-  letters.forEach(function (letter, index) {
-    ctx.fillText(letter, 25 + index * 25, 25);
-  });
+  for (let i = 0; i < 10; i++) {
+    ctx.fillText(getLetter(i), 25 + i * 25, 25);
+  }
 
   for (let i = 0; i < 10; i++) {
     ctx.fillText(i + 1, 0, 50 + i * 25);
