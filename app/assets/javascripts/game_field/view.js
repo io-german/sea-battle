@@ -9,7 +9,6 @@ export default class {
     var ctx = this.canvas.getContext('2d');
 
     drawMarkings(ctx);
-
   }
 }
 
