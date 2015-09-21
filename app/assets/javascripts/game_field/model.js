@@ -8,7 +8,7 @@ export default class {
     }
   }
 
-  updateCell (row, column, value) {
+  update_cell (row, column, value) {
     this.field[row][column] = value;
     this.view.draw(this.field);
   }
