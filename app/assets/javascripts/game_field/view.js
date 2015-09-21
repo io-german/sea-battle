@@ -1,56 +1,43 @@
 /* eslint no-unused-vars: 0 */
 import get_letter from '../util/letters.js';
+import Canvas from '../canvas/Canvas.js';
+import Point from '../canvas/primitives/Point.js';
+import Rectangle from '../canvas/primitives/Rectangle.js';
 
 export default class {
   constructor (canvas) {
-    this.canvas = canvas;
+    this.canvas = new Canvas(canvas);
   }
 
   draw (model) {
-    var ctx = this.canvas.getContext('2d');
-
-    clear(ctx, this.canvas);
-    draw_markings(ctx);
-    draw_ships(ctx, model);
+    this.canvas.clear();
+    draw_markings(this.canvas);
+    draw_ships(this.canvas, model);
   }
 }
 
-function clear (ctx, canvas) {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
-
-function draw_markings (ctx) {
-  ctx.font = '25px serif';
+function draw_markings (canvas) {
   for (let i = 0; i < 10; i++) {
-    ctx.fillText(get_letter(i), 25 + i * 25, 25);
+    canvas.text(get_letter(i), new Point(25 + i * 25, 25));
+    canvas.text(i + 1, new Point(0, 50 + i * 25));
   }
 
-  for (let i = 0; i < 10; i++) {
-    ctx.fillText(i + 1, 0, 50 + i * 25);
-  }
-
-  ctx.beginPath();
   for (let i = 0; i < 11; i++) {
-    ctx.moveTo(25, 25 + 25 * i);
-    ctx.lineTo(725, 25 + 25 * i);
-
-    ctx.moveTo(25 + 25 * i, 25);
-    ctx.lineTo(25 + 25 * i, 725);
+    canvas.line(new Point(25, 25 * (1 + i)), new Point(11 * 25, 25 * (1 + i)));
+    canvas.line(new Point(25 * (i + 1), 25), new Point(25 * (i + 1), 11* 25));
   }
-  ctx.stroke();
+
+  canvas.stroke();
 }
 
-function draw_ships (ctx, model) {
-  model && model.forEach(function (row, rowIndex) {
-    row.forEach(function (cell, colIndex) {
+function draw_ships (canvas, model) {
+  model && model.forEach(function (row, row_index) {
+    row.forEach(function (cell, col_index) {
       if (cell === 'wounded') {
-        ctx.moveTo(25 + 25 * rowIndex, 25 + 25 * colIndex);
-        ctx.lineTo(50 + 25 * rowIndex, 50 + 25 * colIndex);
-
-        ctx.moveTo(50 + 25 * rowIndex, 25 + 25 * colIndex);
-        ctx.lineTo(25 + 25 * rowIndex, 50 + 25 * colIndex);
+        let rect = new Rectangle(25 * (row_index + 1), 25 * (col_index + 1), 25, 25);
+        canvas.rect_diagonals(rect);
       }
     });
   });
-  ctx.stroke();
+  canvas.stroke();
 }
