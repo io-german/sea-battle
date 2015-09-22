@@ -54,7 +54,7 @@ gulp.task('css', function () {
 
 gulp.task('test', function () {
   return gulp.src('test/assets/javascripts/**/*_test.js')
-    .pipe(mocha({ reporter: 'nyan' }));
+    .pipe(mocha({ reporter: 'spec' }));
 });
 
 gulp.task('dist', function () {
