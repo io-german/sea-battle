@@ -9,12 +9,12 @@ export default class {
   }
 
   clear () {
-    _clear(this.context, this.canvas)
-  };
+    _clear(this.context, this.canvas);
+  }
 
   line (from, to) {
-    _line(this.context, from, to)
-  };
+    _line(this.context, from, to);
+  }
 
   rect_diagonals (rect) {
     _rect_diagonals(this.context, rect);
