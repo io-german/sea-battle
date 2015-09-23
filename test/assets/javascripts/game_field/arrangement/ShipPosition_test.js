@@ -69,6 +69,18 @@ describe('ShipPosition', function () {
 
       ship.rotation.should.equal('row');
     });
+
+    it('should not change rotation if ship will become outside of field ("row" -> "col")', function () {
+      var ship = new ShipPosition({ row: 9, col: 0 }, 'row', 4).rotate();
+
+      ship.rotation.should.equal('row');
+    });
+
+    it('should not change rotation if ship will become outside of field ("col" -> "row")', function () {
+      var ship = new ShipPosition({ row: 0, col: 9 }, 'col', 4).rotate();
+
+      ship.rotation.should.equal('col');
+    });
   });
 
   describe('move method', function () {

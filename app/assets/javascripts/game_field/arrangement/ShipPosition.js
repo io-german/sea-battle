@@ -17,9 +17,10 @@ export default class ShipPosition {
   }
 
   rotate () {
-    var new_rotation = this.rotation === 'row' ? 'col' : 'row';
+    var new_rotation = this.rotation === 'row' ? 'col' : 'row',
+        new_position = new ShipPosition(this.base_coord, new_rotation, this.hull_size);
 
-    return new ShipPosition(this.base_coord, new_rotation, this.hull_size);
+    return new_position.within_field() ? new_position : this;
   }
 
   move (direction) {
