@@ -23,23 +23,22 @@ export default class ShipPosition {
   }
 
   move (direction) {
-    var row_increment  = direction === 'up' ? -1 : ( direction === 'down' ? 1 : 0 ),
-        col_increment  = direction === 'left' ? -1 : ( direction === 'right' ? 1 : 0 ),
-        new_base_coord = {
-          row: this.base_coord.row + row_increment,
-          col: this.base_coord.col + col_increment
-        },
-        new_position = new ShipPosition(new_base_coord, this.rotation, this.hull_size);
+    var row_increment  = direction === 'up' ? -1 : (direction === 'down' ? 1 : 0),
+        col_increment  = direction === 'left' ? -1 : (direction === 'right' ? 1 : 0),
+        base_row = this.base_coord.row + row_increment,
+        base_col = this.base_coord.col + col_increment,
+        new_base_coord = { row: base_row, col: base_col },
+        new_position   = new ShipPosition(new_base_coord, this.rotation, this.hull_size);
 
     return new_position.within_field() ? new_position : this;
   }
 
   within_field () {
-    var first = this.coords[0],
-        last = this.coords[this.coords.length - 1],
-        left = first.col,
-        top = first.row,
-        right = last.col,
+    var first  = this.coords[ 0 ],
+        last   = this.coords[ this.coords.length - 1 ],
+        left   = first.col,
+        top    = first.row,
+        right  = last.col,
         bottom = last.row;
 
     return left >= 0 && top >= 0 && right < 10 && bottom < 10;
