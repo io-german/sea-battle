@@ -4,8 +4,16 @@ export default class {
   constructor (left, top, width, height) {
     this.left = left;
     this.top = top;
-    this.right = left + width;
-    this.bottom = top + height;
+    this.width = width;
+    this.height = height;
+  }
+
+  get right () {
+    return left + width;
+  }
+
+  get bottom () {
+    return top + height;
   }
 
   top_left () {
