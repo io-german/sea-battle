@@ -1,40 +1,40 @@
 export default class ShipPosition {
-  constructor (base_coord, rotation, hull_size) {
-    this.base_coord = base_coord;
+  constructor (baseCoord, rotation, hullSize) {
+    this.baseCoord = baseCoord;
     this.rotation = rotation;
-    this.hull_size = hull_size;
+    this.hullSize = hullSize;
     this.coords = [];
 
-    for (let i = 0; i < hull_size; i++) {
-      let row_increment = rotation === 'row' ? 0 : i,
-          col_increment = rotation === 'col' ? 0 : i;
+    for (let i = 0; i < hullSize; i++) {
+      let rowIncrement = rotation === 'row' ? 0 : i,
+          colIncrement = rotation === 'col' ? 0 : i;
 
       this.coords.push({
-        row: base_coord.row + row_increment,
-        col: base_coord.col + col_increment
+        row: baseCoord.row + rowIncrement,
+        col: baseCoord.col + colIncrement
       });
     }
   }
 
   rotate () {
-    var new_rotation = this.rotation === 'row' ? 'col' : 'row',
-        new_position = new ShipPosition(this.base_coord, new_rotation, this.hull_size);
+    var newRotation = this.rotation === 'row' ? 'col' : 'row',
+        newPosition = new ShipPosition(this.baseCoord, newRotation, this.hullSize);
 
-    return new_position.within_field() ? new_position : this;
+    return newPosition.withinField() ? newPosition : this;
   }
 
   move (direction) {
-    var row_increment  = direction === 'up' ? -1 : (direction === 'down' ? 1 : 0),
-        col_increment  = direction === 'left' ? -1 : (direction === 'right' ? 1 : 0),
-        base_row = this.base_coord.row + row_increment,
-        base_col = this.base_coord.col + col_increment,
-        new_base_coord = { row: base_row, col: base_col },
-        new_position   = new ShipPosition(new_base_coord, this.rotation, this.hull_size);
+    var rowIncrement  = direction === 'up' ? -1 : (direction === 'down' ? 1 : 0),
+        colIncrement  = direction === 'left' ? -1 : (direction === 'right' ? 1 : 0),
+        baseRow = this.baseCoord.row + rowIncrement,
+        baseCol = this.baseCoord.col + colIncrement,
+        newBaseCoord = { row: baseRow, col: baseCol },
+        newPosition   = new ShipPosition(newBaseCoord, this.rotation, this.hullSize);
 
-    return new_position.within_field() ? new_position : this;
+    return newPosition.withinField() ? newPosition : this;
   }
 
-  within_field () {
+  withinField () {
     var first  = this.coords[ 0 ],
         last   = this.coords[ this.coords.length - 1 ],
         left   = first.col,

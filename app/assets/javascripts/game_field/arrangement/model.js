@@ -1,4 +1,4 @@
-import create_field from '../helper/create_field.js';
+import createField from '../helper/create_field.js';
 import ShipPosition from './ShipPosition.js';
 
 var ships = [ 1, 1, 1, 1, 2, 2, 2, 3, 3, 4 ];
@@ -6,25 +6,25 @@ var ships = [ 1, 1, 1, 1, 2, 2, 2, 3, 3, 4 ];
 export default class {
   constructor (view) {
     this.view = view;
-    this.field = create_field();
-    this.current_ship = 0;
+    this.field = createField();
+    this.currentShip = 0;
 
     this.view(this);
   }
 
   move (direction) {
-    this.current_position = this.current_position.move(direction);
+    this.currentPosition = this.currentPosition.move(direction);
     this.view(this);
   }
 
   rotate () {
-    this.current_position = this.current_position.rotate();
+    this.currentPosition = this.currentPosition.rotate();
     this.view(this);
   }
 
   place () {
     if (this.valid) {
-      let coords = this.current_position.coords;
+      let coords = this.currentPosition.coords;
 
       for (let i = 0; i < coords.length; i++) {
         let cell = coords[i];
@@ -32,38 +32,38 @@ export default class {
         this.field[cell.row][cell.col] = 's';
       }
 
-      this.current_ship += 1;
+      this.currentShip += 1;
       this.view(this);
     }
   }
 
-  set current_ship (value) {
-    this._current_ship = value;
-    this.current_position = this.init_ship(value);
+  set currentShip (value) {
+    this.currentShipIndex = value;
+    this.currentPosition = this.initShip(value);
   }
 
-  get current_ship () {
-    return this._current_ship;
+  get currentShip () {
+    return this.currentShipIndex;
   }
 
-  init_ship (current_ship) {
-    var hull_size  = ships[ current_ship ],
-        base_coord = { row: 0, col: 0 };
+  initShip (currentShip) {
+    var hullSize  = ships[ currentShip ],
+        baseCoord = { row: 0, col: 0 };
 
-    return new ShipPosition(base_coord, 'row', hull_size);
+    return new ShipPosition(baseCoord, 'row', hullSize);
   }
 
   get valid () {
-    var coords = this.current_position.coords;
+    var coords = this.currentPosition.coords;
 
     for (let i = 0; i < coords.length; i++) {
-      if (not_valid_cell(coords[ i ], this.field)) return false;
+      if (notValidCell(coords[ i ], this.field)) return false;
     }
     return true;
   }
 }
 
-function not_valid_cell (cell, field) {
+function notValidCell (cell, field) {
   for (let i = -1; i <= 1; i++) {
     for (let j = -1; j <= 1; j++) {
       var row = cell.row + i,

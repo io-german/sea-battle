@@ -9,26 +9,26 @@ export default class {
   }
 
   get right () {
-    return left + width;
+    return this.left + this.width;
   }
 
   get bottom () {
-    return top + height;
+    return this.top + this.height;
   }
 
-  top_left () {
+  topLeft () {
     return new Point(this.left, this.top);
   }
 
-  top_right () {
+  topRight () {
     return new Point(this.right, this.top);
   }
 
-  bottom_left () {
+  bottomLeft () {
     return new Point(this.left, this.bottom);
   }
 
-  bottom_right () {
+  bottomRight () {
     return new Point(this.right, this.bottom);
   }
 

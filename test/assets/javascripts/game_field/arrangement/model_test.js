@@ -16,8 +16,8 @@ describe('Arrangement model', function () {
     });
 
     it('should place ship on (0, 0) cell', function () {
-      var row = model.current_position.base_coord.row,
-          col = model.current_position.base_coord.col;
+      var row = model.currentPosition.baseCoord.row,
+          col = model.currentPosition.baseCoord.col;
 
 
       row.should.equal(0);
@@ -25,7 +25,7 @@ describe('Arrangement model', function () {
     });
 
     it('should place ship with row rotation', function () {
-      var rotation = model.current_position.rotation;
+      var rotation = model.currentPosition.rotation;
 
       rotation.should.equal('row');
     });
@@ -35,8 +35,8 @@ describe('Arrangement model', function () {
     it('should increase column and leave row the same if ship was moved right', function () {
       model.move('right');
 
-      var row = model.current_position.base_coord.row,
-          col = model.current_position.base_coord.col;
+      var row = model.currentPosition.baseCoord.row,
+          col = model.currentPosition.baseCoord.col;
 
       row.should.equal(0);
       col.should.equal(1);
@@ -46,8 +46,8 @@ describe('Arrangement model', function () {
       model.move('right');
       model.move('left');
 
-      var row = model.current_position.base_coord.row,
-          col = model.current_position.base_coord.col;
+      var row = model.currentPosition.baseCoord.row,
+          col = model.currentPosition.baseCoord.col;
 
       row.should.equal(0);
       col.should.equal(0);
@@ -56,8 +56,8 @@ describe('Arrangement model', function () {
     it('should increase row and leave column the same if ship is moved down', function () {
       model.move('down');
 
-      var row = model.current_position.base_coord.row,
-          col = model.current_position.base_coord.col;
+      var row = model.currentPosition.baseCoord.row,
+          col = model.currentPosition.baseCoord.col;
 
       row.should.equal(1);
       col.should.equal(0);
@@ -67,8 +67,8 @@ describe('Arrangement model', function () {
       model.move('down');
       model.move('up');
 
-      var row = model.current_position.base_coord.row,
-          col = model.current_position.base_coord.col;
+      var row = model.currentPosition.baseCoord.row,
+          col = model.currentPosition.baseCoord.col;
 
       row.should.equal(0);
       col.should.equal(0);
@@ -77,8 +77,8 @@ describe('Arrangement model', function () {
     it('should not move ship outside left border', function () {
       model.move('left');
 
-      var row = model.current_position.base_coord.row,
-          col = model.current_position.base_coord.col;
+      var row = model.currentPosition.baseCoord.row,
+          col = model.currentPosition.baseCoord.col;
 
       row.should.equal(0);
       col.should.equal(0);
@@ -87,8 +87,8 @@ describe('Arrangement model', function () {
     it('should not move ship outside top border', function () {
       model.move('up');
 
-      var row = model.current_position.base_coord.row,
-          col = model.current_position.base_coord.col;
+      var row = model.currentPosition.baseCoord.row,
+          col = model.currentPosition.baseCoord.col;
 
       row.should.equal(0);
       col.should.equal(0);
@@ -99,8 +99,8 @@ describe('Arrangement model', function () {
         model.move('right');
       }
 
-      var row = model.current_position.base_coord.row,
-          col = model.current_position.base_coord.col;
+      var row = model.currentPosition.baseCoord.row,
+          col = model.currentPosition.baseCoord.col;
 
       row.should.equal(0);
       col.should.equal(9);
@@ -111,8 +111,8 @@ describe('Arrangement model', function () {
         model.move('down');
       }
 
-      var row = model.current_position.base_coord.row,
-          col = model.current_position.base_coord.col;
+      var row = model.currentPosition.baseCoord.row,
+          col = model.currentPosition.baseCoord.col;
 
       row.should.equal(9);
       col.should.equal(0);
@@ -127,8 +127,8 @@ describe('Arrangement model', function () {
       model.move('up');
       model.move('left');
 
-      var row = model.current_position.base_coord.row,
-          col = model.current_position.base_coord.col;
+      var row = model.currentPosition.baseCoord.row,
+          col = model.currentPosition.baseCoord.col;
 
       row.should.equal(2);
       col.should.equal(1);
@@ -144,8 +144,8 @@ describe('Arrangement model', function () {
       model.move('up');
       model.move('left');
 
-      var row = model.current_position.base_coord.row,
-          col = model.current_position.base_coord.col;
+      var row = model.currentPosition.baseCoord.row,
+          col = model.currentPosition.baseCoord.col;
 
       row.should.equal(2);
       col.should.equal(1);
@@ -156,7 +156,7 @@ describe('Arrangement model', function () {
     it('should change rotation', function () {
       model.rotate();
 
-      var rotation = model.current_position.rotation;
+      var rotation = model.currentPosition.rotation;
 
       rotation.should.equal('col');
     });
@@ -165,7 +165,7 @@ describe('Arrangement model', function () {
       model.rotate();
       model.rotate();
 
-      var rotation = model.current_position.rotation;
+      var rotation = model.currentPosition.rotation;
 
       rotation.should.equal('row');
     });
@@ -223,8 +223,8 @@ describe('Arrangement model', function () {
       model.move('down');
       model.place();
 
-      var row = model.current_position.base_coord.row,
-          col = model.current_position.base_coord.col;
+      var row = model.currentPosition.baseCoord.row,
+          col = model.currentPosition.baseCoord.col;
 
       row.should.equal(0);
       col.should.equal(0);
