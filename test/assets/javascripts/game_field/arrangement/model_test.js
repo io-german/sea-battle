@@ -188,7 +188,7 @@ describe('Arrangement model', function () {
       model.field[ 1 ][ 3 ].should.equal('s');
     });
 
-    it.skip('should add ship to the map (large ship)', function () {
+    it('should add ship to the map (large ship)', function () {
       model.current_ship = 9;
 
       model.move('right');
