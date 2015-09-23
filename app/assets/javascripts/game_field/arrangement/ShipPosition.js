@@ -7,7 +7,7 @@ export default class ShipPosition {
 
     for (let i = 0; i < hull_size; i++) {
       let row_increment = rotation === 'row' ? 0 : i,
-          col_increment = rotation === 'col' ? i : 0;
+          col_increment = rotation === 'col' ? 0 : i;
 
       this.coords.push({
         row: base_coord.row + row_increment,
