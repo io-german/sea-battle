@@ -28,6 +28,7 @@ export default class {
 
       for (let i = 0; i < coords.length; i++) {
         let cell = coords[i];
+
         this.field[cell.row][cell.col] = 's';
       }
 
