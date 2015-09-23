@@ -1,4 +1,5 @@
 import _clear from './clear.js';
+import _fill_rect from './fill_rect.js';
 import _line from './line.js';
 import _rect_diagonals from './rect_diagonals.js';
 
@@ -18,6 +19,10 @@ export default class {
 
   rect_diagonals (rect) {
     _rect_diagonals(this.context, rect);
+  }
+
+  fill_rect (rect, color) {
+    _fill_rect(this.context, rect, color);
   }
 
   stroke () {
