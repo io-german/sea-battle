@@ -25,6 +25,7 @@
     "gulp-plumber": "^1.0.1",
     "gulp-rename": "^1.2.2",
     "gulp-webpack": "^1.5.0",
+    "keycode": "^2.1.0",
     "plumber": "^0.4.8",
     "webpack": "^1.12.2"
   }
