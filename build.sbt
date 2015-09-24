@@ -12,7 +12,8 @@ libraryDependencies ++= Seq(
   jdbc,
   cache,
   ws,
-  specs2 % Test
+  "org.scalatestplus" % "play_2.11" % "1.4.0-M3" % "test",
+  "org.seleniumhq.selenium" % "selenium-chrome-driver" % "2.47.1"
 )
 
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
