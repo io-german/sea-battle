@@ -12,13 +12,12 @@ describe('Arrangement model', function () {
 
   describe('constructor', function () {
     it('should set current_ship value to 0', function () {
-      model.current_ship.should.equal(0);
+      model.currentShipIndex.should.equal(0);
     });
 
     it('should place ship on (0, 0) cell', function () {
       var row = model.currentPosition.baseCoord.row,
           col = model.currentPosition.baseCoord.col;
-
 
       row.should.equal(0);
       col.should.equal(0);
@@ -189,7 +188,7 @@ describe('Arrangement model', function () {
     });
 
     it('should add ship to the map (large ship)', function () {
-      model.current_ship = 9;
+      model.currentShip = 9;
 
       model.move('right');
       model.move('right');
@@ -215,7 +214,7 @@ describe('Arrangement model', function () {
     it('should switch to another ship', function () {
       model.place();
 
-      model.current_ship.should.equal(1);
+      model.currentShipIndex.should.equal(1);
     });
 
     it('should return current_ship cursor to the (0, 0) cell', function () {
