@@ -1,6 +1,6 @@
 import getLetter from '../../util/letters.js';
 import { GRID_SIZE } from '../constants.js';
-import ship from '../canvas_primitives/ship.js';
+import primitives from '../canvas_primitives/main.js';
 import Point from '../../canvas/primitives/Point.js';
 
 export function drawMarkings (canvas) {
@@ -22,7 +22,13 @@ export function drawShips (canvas, field) {
     for (let colIndex = 0; colIndex < field[ rowIndex ].length; colIndex++) {
       switch (field[rowIndex][colIndex]) {
         case 's':
-          ship(canvas, rowIndex, colIndex);
+          primitives.ship(canvas, rowIndex, colIndex);
+          break;
+        case 'm':
+          primitives.miss(canvas, rowIndex, colIndex);
+          break;
+        case 'w':
+          primitives.wounded(canvas, rowIndex, colIndex);
           break;
       }
     }
