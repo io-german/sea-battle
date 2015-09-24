@@ -1,4 +1,5 @@
 import createField from '../helper/create_field.js';
+import { pubsub } from '../../util/pubsub.js';
 import ShipPosition from './ShipPosition.js';
 
 var ships = [ 1, 1, 1, 1, 2, 2, 2, 3, 3, 4 ];
@@ -32,7 +33,9 @@ export default class {
         this.field[cell.row][cell.col] = 's';
       }
 
-      this.currentShip += 1;
+      if (++this.currentShip > 9) {
+        pubsub.publish('arrangement.finished', this.field);
+      }
       this.view(this);
     }
   }

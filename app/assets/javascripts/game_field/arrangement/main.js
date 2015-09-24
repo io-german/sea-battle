@@ -1,11 +1,18 @@
 import keycode from 'keycode';
+import { pubsub } from '../../util/pubsub.js';
 import view from './view.js';
 import Model from './model.js';
 
 export default function () {
   var model = new Model(view);
 
-  document.addEventListener('keyup', function (e) {
+  document.addEventListener('keyup', keyUpListener);
+
+  pubsub.subscribe('arrangement.finished', function () {
+    document.removeEventListener('keyup', keyUpListener);
+  });
+
+  function keyUpListener (e) {
     e.preventDefault();
 
     switch (e.keyCode) {
@@ -19,5 +26,5 @@ export default function () {
         model.move(keycode(e.keyCode));
         break;
     }
-  });
+  }
 }
