@@ -15,7 +15,7 @@ function getNeighborEmptyCells (field, cell) {
 
   for (let rowOffset = -1; rowOffset < 2; rowOffset++) {
     for (let colOffset = -1; colOffset < 2; colOffset++) {
-      let rowIndex = cell.row + colOffset,
+      let rowIndex = cell.row + rowOffset,
           colIndex = cell.col + colOffset;
 
       if (colOffset === 0 && rowOffset === 0) continue;
