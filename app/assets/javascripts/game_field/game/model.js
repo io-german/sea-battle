@@ -27,6 +27,7 @@ export default class {
       result = shipKilled ? 'k' : 'w';
     }
 
+    this.view(this);
     return result;
   }
 
@@ -39,5 +40,6 @@ export default class {
 
       neighborCells.forEach((cell) => field[cell.row][cell.col] = 'm');
     }
+    this.view(this);
   }
 }
