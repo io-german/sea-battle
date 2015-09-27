@@ -9,7 +9,10 @@ export default function () {
         rivalField = document.getElementById('rival-field');
 
     rivalField.addEventListener('click', fieldClickEvent);
-    pubsub.subscribe('shot', (shotInfo) => model.shot(shotInfo.field, shotInfo.coord, shotInfo.result));
+
+    pubsub.subscribe('shot.rival', function (shotInfo) {
+      model.rivalShot({ row: shotInfo.row, col: shotInfo.col });
+    });
 
     function fieldClickEvent (e) {
       var target = e.target,
@@ -23,7 +26,7 @@ export default function () {
           /* TODO: Ask server about actual result. */
           result = 'm';
 
-      pubsub.publish('shot', { field: 'rival', coord: coord, result: result });
+      model.ownShot(coord, result);
     }
   });
 }
