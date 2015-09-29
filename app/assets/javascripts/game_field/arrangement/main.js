@@ -10,6 +10,7 @@ export default function () {
 
   pubsub.subscribe('arrangement.finished', function () {
     document.removeEventListener('keyup', keyUpListener);
+    document.getElementsByClassName('arrangement-step')[ 0 ].style.display = 'none';
   });
 
   function keyUpListener (e) {

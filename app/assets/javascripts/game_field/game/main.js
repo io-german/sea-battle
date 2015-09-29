@@ -8,6 +8,8 @@ export default function () {
     var model      = new Model(view, field),
         rivalField = document.getElementById('rival-field');
 
+    document.getElementsByClassName('game-step')[ 0 ].style.display = 'block';
+
     rivalField.addEventListener('click', fieldClickEvent);
 
     pubsub.subscribe('shot.rival', function (shotInfo) {
@@ -15,16 +17,16 @@ export default function () {
     });
 
     function fieldClickEvent (e) {
-      var target = e.target,
-          targetRect = target.getBoundingClientRect(),
+      var target         = e.target,
+          targetRect     = target.getBoundingClientRect(),
           targetPosition = { x: Math.ceil(targetRect.left), y: Math.ceil(targetRect.top) },
-          clickPosition = { x: e.clientX - targetPosition.x, y: e.clientY - targetPosition.y },
-          coord  = {
+          clickPosition  = { x: e.clientX - targetPosition.x, y: e.clientY - targetPosition.y },
+          coord          = {
             row: Math.floor(clickPosition.y / GRID_SIZE) - 1,
             col: Math.floor(clickPosition.x / GRID_SIZE) - 1
           },
           /* TODO: Ask server about actual result. */
-          result = 'm';
+          result         = 'm';
 
       model.ownShot(coord, result);
     }
