@@ -2,11 +2,11 @@ package fsa
 
 import scala.util.Random
 
-sealed trait FiniteStateMachine
-sealed trait OperationVertex[I, O <: FiniteStateMachine] extends FiniteStateMachine {
+sealed trait State
+sealed trait OperationVertex[I, O <: State] extends State {
   def next(inputData: I): O
 }
-sealed trait ConditionalVertex[O1 <: FiniteStateMachine, O2 <: FiniteStateMachine] extends FiniteStateMachine {
+sealed trait ConditionalVertex[O1 <: State, O2 <: State] extends State {
   def output1: O1
   def output2: O2
   def predicate: Boolean
@@ -15,7 +15,7 @@ sealed trait ConditionalVertex[O1 <: FiniteStateMachine, O2 <: FiniteStateMachin
     if (predicate) output1
     else output2
 }
-sealed trait EndVertex extends FiniteStateMachine
+sealed trait EndVertex extends State
 
 case object InitialState extends OperationVertex[String, Player2Connection] {
   override def next(player1: String): Player2Connection = Player2Connection(player1)
@@ -43,9 +43,9 @@ case class ArrangementCond(players: Seq[String], player1Finished: Boolean = fals
   override def output2: ArrangementOp = ArrangementOp(players, player1Finished, player2Finished)
 }
 
-case class PlayerMove(players: Seq[String], currentPlayer: Int, deadShips: Seq[Int] = Seq(0, 0)) extends OperationVertex[Int, PlayerMoveResponseOp] {
-  def next(movingPlayer: Int): PlayerMoveResponseOp = {
-    if (movingPlayer != currentPlayer) sys.error("")
+case class PlayerMove(players: Seq[String], currentPlayer: Int, deadShips: Seq[Int] = Seq(0, 0)) extends OperationVertex[String, PlayerMoveResponseOp] {
+  def next(movingPlayer: String): PlayerMoveResponseOp = {
+    if (movingPlayer != players(currentPlayer)) sys.error("")
 
     PlayerMoveResponseOp(players, deadShips, currentPlayer)
   }

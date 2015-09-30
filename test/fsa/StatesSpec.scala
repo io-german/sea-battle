@@ -79,12 +79,12 @@ class StatesSpec extends PlaySpec {
       val initialState = PlayerMove(players, 0)
       val expectedState = PlayerMoveResponseOp(players, Seq(0, 0), 0)
 
-      initialState.next(0) must be (expectedState)
+      initialState.next("vasya") must be (expectedState)
     }
 
     "throw an exception if wrong player tries to move" in {
       val initialState = PlayerMove(players, 0)
-      a [RuntimeException] must be thrownBy initialState.next(1)
+      a [RuntimeException] must be thrownBy initialState.next("petya")
     }
   }
 
