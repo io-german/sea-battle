@@ -12,6 +12,7 @@ libraryDependencies ++= Seq(
   jdbc,
   cache,
   ws,
+  "com.typesafe.akka" % "akka-testkit_2.11" % "2.3.13" % "test",
   "org.scalatestplus" % "play_2.11" % "1.4.0-M3" % "test",
   "org.seleniumhq.selenium" % "selenium-chrome-driver" % "2.47.1"
 )
