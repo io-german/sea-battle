@@ -24,7 +24,7 @@ object MessageSerializer {
 
   private def playerMoveResultConfirmation(genName: String, row: Int, col: Int, result: String) = Json.obj(
     "message" -> "player_move_result_confirmation",
-    "genName" -> genName,
+    "gen_name" -> genName,
     "row" -> row,
     "col" -> col,
     "result" -> result)
