@@ -4,21 +4,24 @@ import akka.actor.{Actor, ActorRef, Props}
 
 object ClientActor {
 
-  def props(out: ActorRef) = Props(new ClientActor(RoomActor(), out))
+  def props(out: ActorRef) = Props(new ClientActor(GameActor(), out))
 
 }
 
-class ClientActor(rooms: ActorRef, out: ActorRef) extends Actor {
+class ClientActor(game: ActorRef, out: ActorRef) extends Actor {
 
   override def aroundPreStart(): Unit = {
-    rooms ! Subscribe
+    game ! Subscribe
   }
 
   override def receive: Receive = {
-    case msg: String =>
-      rooms ! Message(msg)
-    case Message(s) =>
-      out ! s
+    case msg: String => {
+      MessageDeserializer(msg) match {
+        case Some(message) => game ! message
+        case _ => sys.error("unknown message")
+      }
+    }
+    case serverMsg: ServerMessage => out ! MessageSerializer(serverMsg)
   }
 
 }

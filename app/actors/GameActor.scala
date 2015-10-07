@@ -1,13 +1,28 @@
 package actors
 
-import akka.actor.{ActorRef, Actor}
+import akka.actor.{Props, ActorRef, Actor}
 import fsa._
+import play.libs.Akka
+
+import scala.annotation.tailrec
+
+object GameActor {
+  lazy val actor = Akka.system().actorOf(Props[GameActor])
+
+  def apply() = actor
+}
+
+case class PlayerSession(rival: Option[String], actor: ActorRef, fsm: FiniteStateMachine)
 
 class GameActor extends Actor {
 
-  var sessions: Map[String, (ActorRef, FiniteStateMachine)] = Map.empty
+  var registeredActors: Set[ActorRef] = Set.empty
+  var sessions: Map[String, PlayerSession] = Map.empty
 
   override def receive: Receive = {
+    case Subscribe =>
+      registeredActors += sender()
+
     case ConnectionRequest(userName) =>
       processConnectionRequest(userName)
 
@@ -22,89 +37,137 @@ class GameActor extends Actor {
   }
 
   private def processConnectionRequest(userName: String) = {
-    val genName: String = _
-    val authToken = _
-    lazy val newSession: FiniteStateMachine = new FiniteStateMachine()
-
-    val session = findSessionWithoutPair.getOrElse(newSession)
+    val genName: String = generateName(userName)
+    val authToken: String = generateAuthToken(genName)
     val actor = sender()
 
-    sessions += (genName ->(actor, session))
+    lazy val newMachine: FiniteStateMachine = new FiniteStateMachine()
+    lazy val newSession: PlayerSession = PlayerSession(None, actor, newMachine)
 
-    session.op {
-      case InitialState => InitialState.next(genName) /* Send simple confirmation */
+    val session = findSessionWithoutPair match {
+      case Some((rivalName, rivalSession)) =>
+        val ownSession = newSession.copy(rival = Some(rivalName), fsm = rivalSession.fsm)
+        sessions += rivalName -> rivalSession.copy(rival = Some(genName))
+        sessions += genName -> ownSession
+        ownSession
+      case None =>
+        sessions += genName -> newSession
+        newSession
+    }
+
+    val nextStage = session.fsm.op {
+      case InitialState => InitialState.next(genName)
       case connection: Player2Connection => connection.next(genName)
-    } match {
-      case Player2Connection(_) => actor ! ConnectionResponse(genName, authToken)
-      case ArrangementOp(_, _, _) => actor ! ArrangementStartNotification
+    }
+
+    actor ! ConnectionResponse(genName, authToken)
+
+    nextStage match {
+      case ArrangementOp(_, _, _) =>
+        rivalActor(genName) ! ArrangementStartNotification
+        actor ! ArrangementStartNotification
+      case _ =>
     }
   }
 
   private def processArrangementFinished(genName: String) = {
-    val (actor, fsm) = ownSession(genName)
+    val PlayerSession(_, actor, fsm) = ownSession(genName)
 
-    fsm.op { case aop: ArrangementOp => aop.next(genName).next } match {
-      case ArrangementOp(_, _, _) => actor ! ArrangementFinishedConfirmation
-      case fsa.PlayerMove(_, currentPlayer, _) => actor ! GameStartNotification
+    val nextStep = fsm.op { case aop: ArrangementOp => aop.next(genName).next }
+
+    actor ! ArrangementFinishedConfirmation
+
+    nextStep match {
+      case fsa.PlayerMove(_, currentPlayer, _) =>
+        rivalActor(genName) ! GameStartNotification
+        actor ! GameStartNotification
+      case _ =>
     }
   }
 
   private def processPlayerMove(genName: String, row: Int, col: Int) = {
-    val (_, fsm) = ownSession(genName)
+    val PlayerSession(_, _, fsm) = ownSession(genName)
 
     fsm.op { case pm: fsa.PlayerMove => pm.next(genName) } match {
       case PlayerMoveResponseOp(players, _, _) =>
-        val (actor, _) = rivalSession(genName)
-
-        actor ! PlayerMoveConfirmation(row, col)
+        val PlayerSession(_, rivalActor, _) = rivalSession(genName)
+        rivalActor ! PlayerMoveConfirmation(row, col)
     }
   }
 
   private def processPlayerMoveResult(genName: String, result: String) = {
-    val (ownActor, fsm) = ownSession(genName)
-    val (rivalActor, _) = rivalSession(genName)
+    val PlayerSession(_, ownActor, fsm) = ownSession(genName)
+    val PlayerSession(_, rivalActor, _) = rivalSession(genName)
 
     fsm.op { case pm: fsa.PlayerMoveResponseOp => pm.next(result == "k").next } match {
-      case fsa.PlayerMove(_, _, _) => ownActor ! YourTurnNotification
+      case fsa.PlayerMove(_, _, _) =>
+        ownActor ! YourTurnNotification
       case GameEnd(winner) =>
         ownActor ! GameOverNotification
         rivalActor ! GameOverNotification
     }
   }
 
-  private def findSessionWithoutPair: Option[FiniteStateMachine] = ???
+  private def findSessionWithoutPair: Option[(String, PlayerSession)] =
+    sessions.find { case (_, session) => session.rival.isEmpty }
 
-  private def isValidAuth(genName: String, authToken: String): Boolean = ???
+  private def ownSession(genName: String): PlayerSession =
+    sessions(genName)
 
-  private def ownSession(genName: String): (ActorRef, FiniteStateMachine) = ???
+  private def rivalSession(genName: String): PlayerSession = {
+    val PlayerSession(rivalOpt, _, _) = ownSession(genName)
 
-  private def rivalSession(genName: String): (ActorRef, FiniteStateMachine) = ???
+    rivalOpt match {
+      case Some(rival) => ownSession(rival)
+      case None => sys.error("No rival")
+    }
+  }
+
+  private def rivalActor(genName: String): ActorRef = {
+    val PlayerSession(_, actor, _) = rivalSession(genName)
+    actor
+  }
+
+  @tailrec private def generateName(suggestedName: String): String = sessions.get(suggestedName) match {
+    case Some(_) => generateName(suggestedName + System.currentTimeMillis)
+    case None => suggestedName
+  }
+
+  /* TODO: change this method */
+  private def generateAuthToken(genName: String): String = genName + "#auth_change_me"
+
+  private def isValidAuth(genName: String, authToken: String): Boolean =
+    generateAuthToken(genName) == authToken
 }
 
-/* Initial handshake */
-case class ConnectionRequest(userName: String)
+trait PlayerMessage
 
-case class ConnectionResponse(genName: String, authToken: String)
+trait ServerMessage
+
+/* Initial handshake */
+case class ConnectionRequest(userName: String) extends PlayerMessage
+
+case class ConnectionResponse(genName: String, authToken: String) extends ServerMessage
 
 /* Arrangement handshake */
-case class ArrangementFinished(genName: String, authToken: String)
+case class ArrangementFinished(genName: String, authToken: String) extends PlayerMessage
 
-case object ArrangementFinishedConfirmation
+case object ArrangementFinishedConfirmation extends ServerMessage
 
 /* Player's move */
-case class PlayerMove(genName: String, authToken: String, row: Int, col: Int)
+case class PlayerMove(genName: String, authToken: String, row: Int, col: Int) extends PlayerMessage
 
-case class PlayerMoveConfirmation(row: Int, col: Int)
+case class PlayerMoveConfirmation(row: Int, col: Int) extends ServerMessage
 
-case class PlayerMoveResult(genName: String, authToken: String, row: Int, col: Int, result: String)
+case class PlayerMoveResult(genName: String, authToken: String, row: Int, col: Int, result: String) extends PlayerMessage
 
-case class PlayerMoveResultConfirmation(genName: String, row: Int, col: Int, result: String)
+case class PlayerMoveResultConfirmation(genName: String, row: Int, col: Int, result: String) extends ServerMessage
 
 /* Notifications */
-case object ArrangementStartNotification
+case object ArrangementStartNotification extends ServerMessage
 
-case object GameStartNotification
+case object GameStartNotification extends ServerMessage
 
-case object YourTurnNotification
+case object YourTurnNotification extends ServerMessage
 
-case class GameOverNotification(winner: String)
+case class GameOverNotification(winner: String) extends ServerMessage
