@@ -1,7 +1,8 @@
 package actors
 
 import akka.actor.{Props, ActorRef, Actor}
-import fsa._
+import fsa.{FiniteStateMachine, InitialState, Player2Connection, ArrangementOp, PlayerMoveResponseOp, GameEnd}
+import messages._
 import play.libs.Akka
 
 import scala.annotation.tailrec
@@ -16,20 +17,16 @@ case class PlayerSession(rival: Option[String], actor: ActorRef, fsm: FiniteStat
 
 class GameActor extends Actor {
 
-  var registeredActors: Set[ActorRef] = Set.empty
   var sessions: Map[String, PlayerSession] = Map.empty
 
   override def receive: Receive = {
-    case Subscribe =>
-      registeredActors += sender()
-
     case ConnectionRequest(userName) =>
       processConnectionRequest(userName)
 
     case ArrangementFinished(genName, authToken) if isValidAuth(genName, authToken) =>
       processArrangementFinished(genName)
 
-    case actors.PlayerMove(genName, authToken, row, col) if isValidAuth(genName, authToken) =>
+    case PlayerMove(genName, authToken, row, col) if isValidAuth(genName, authToken) =>
       processPlayerMove(genName, row, col)
 
     case PlayerMoveResult(genName, authToken, row, int, result) if isValidAuth(genName, authToken) =>
@@ -134,40 +131,9 @@ class GameActor extends Actor {
   }
 
   /* TODO: change this method */
-  private def generateAuthToken(genName: String): String = genName + "#auth_change_me"
+  private def generateAuthToken(genName: String): String =
+    genName + "#auth_change_me"
 
   private def isValidAuth(genName: String, authToken: String): Boolean =
     generateAuthToken(genName) == authToken
 }
-
-trait PlayerMessage
-
-trait ServerMessage
-
-/* Initial handshake */
-case class ConnectionRequest(userName: String) extends PlayerMessage
-
-case class ConnectionResponse(genName: String, authToken: String) extends ServerMessage
-
-/* Arrangement handshake */
-case class ArrangementFinished(genName: String, authToken: String) extends PlayerMessage
-
-case object ArrangementFinishedConfirmation extends ServerMessage
-
-/* Player's move */
-case class PlayerMove(genName: String, authToken: String, row: Int, col: Int) extends PlayerMessage
-
-case class PlayerMoveConfirmation(row: Int, col: Int) extends ServerMessage
-
-case class PlayerMoveResult(genName: String, authToken: String, row: Int, col: Int, result: String) extends PlayerMessage
-
-case class PlayerMoveResultConfirmation(genName: String, row: Int, col: Int, result: String) extends ServerMessage
-
-/* Notifications */
-case object ArrangementStartNotification extends ServerMessage
-
-case object GameStartNotification extends ServerMessage
-
-case object YourTurnNotification extends ServerMessage
-
-case class GameOverNotification(winner: String) extends ServerMessage
