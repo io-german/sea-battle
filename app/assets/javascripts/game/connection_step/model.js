@@ -1,20 +1,12 @@
-import {model as masterModel} from '../../model.js';
+import { model as masterModel } from '../../model.js';
 
 export default class {
-  constructor(view) {
+  constructor (view) {
     this.view = view;
+    view();
   }
 
-  get userName() {
-    return this._userName;
-  }
-
-  set userName(value) {
-    this._userName = value;
-    view(this);
-  }
-
-  submit () {
-    masterModel.userName = this.userName;
+  submit (userName) {
+    masterModel.userName = userName;
   }
 }
