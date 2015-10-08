@@ -1,4 +1,4 @@
-package fsa
+package fsm
 
 import scala.util.Random
 
@@ -35,15 +35,15 @@ case class ArrangementOp(players: Seq[String], player1Finished: Boolean = false,
   }
 }
 
-case class ArrangementCond(players: Seq[String], player1Finished: Boolean = false, player2Finished: Boolean = false, random: Random = Random) extends ConditionalVertex[PlayerMove, ArrangementOp] {
+case class ArrangementCond(players: Seq[String], player1Finished: Boolean = false, player2Finished: Boolean = false, random: Random = Random) extends ConditionalVertex[PlayerMoveState, ArrangementOp] {
   override def predicate = player1Finished && player2Finished
 
-  override def output1: PlayerMove = PlayerMove(players, random.nextInt(1))
+  override def output1: PlayerMoveState = PlayerMoveState(players, random.nextInt(1))
 
   override def output2: ArrangementOp = ArrangementOp(players, player1Finished, player2Finished)
 }
 
-case class PlayerMove(players: Seq[String], currentPlayer: Int, deadShips: Seq[Int] = Seq(0, 0)) extends OperationVertex[String, PlayerMoveResponseOp] {
+case class PlayerMoveState(players: Seq[String], currentPlayer: Int, deadShips: Seq[Int] = Seq(0, 0)) extends OperationVertex[String, PlayerMoveResponseOp] {
   def next(movingPlayer: String): PlayerMoveResponseOp = {
     if (movingPlayer != players(currentPlayer)) sys.error("")
 
@@ -63,14 +63,14 @@ case class PlayerMoveResponseOp(players: Seq[String], deadShips: Seq[Int], curre
   }
 }
 
-case class PlayerMoveResponseCond(players: Seq[String], deadShips: Seq[Int], currentPlayer: Int) extends ConditionalVertex[GameEnd, PlayerMove] {
+case class PlayerMoveResponseCond(players: Seq[String], deadShips: Seq[Int], currentPlayer: Int) extends ConditionalVertex[GameEnd, PlayerMoveState] {
   val opponentIndex = 1 - currentPlayer
 
   override def predicate: Boolean = deadShips(opponentIndex) == 10
 
   override def output1: GameEnd = GameEnd(players(currentPlayer))
 
-  override def output2: PlayerMove = PlayerMove(players, opponentIndex, deadShips)
+  override def output2: PlayerMoveState = PlayerMoveState(players, opponentIndex, deadShips)
 }
 
 case class GameEnd(winner: String) extends EndVertex

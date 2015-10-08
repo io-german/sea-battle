@@ -31,11 +31,10 @@ class MessageSerializerSpec extends PlaySpec {
     }
 
     "generate valid JSON for PlayerMoveResultConfirmation messages" in {
-      val message = PlayerMoveResultConfirmation("name", 2, 2, "k")
+      val message = PlayerMoveResultConfirmation(2, 2, "k")
       val expectedString =
         "{" +
           "\"message\":\"player_move_result_confirmation\"," +
-          "\"gen_name\":\"name\"," +
           "\"row\":2," +
           "\"col\":2," +
           "\"result\":\"k\"" +

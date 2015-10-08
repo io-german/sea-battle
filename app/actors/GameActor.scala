@@ -1,9 +1,10 @@
 package actors
 
 import akka.actor.{Props, ActorRef, Actor}
-import fsa.{FiniteStateMachine, InitialState, Player2Connection, ArrangementOp, PlayerMoveResponseOp, GameEnd}
+import fsm._
 import messages._
 import play.libs.Akka
+import util.Security
 
 import scala.annotation.tailrec
 
@@ -29,13 +30,13 @@ class GameActor extends Actor {
     case PlayerMove(genName, authToken, row, col) if isValidAuth(genName, authToken) =>
       processPlayerMove(genName, row, col)
 
-    case PlayerMoveResult(genName, authToken, row, int, result) if isValidAuth(genName, authToken) =>
-      processPlayerMoveResult(genName, result)
+    case PlayerMoveResult(genName, authToken, row, col, result) if isValidAuth(genName, authToken) =>
+      processPlayerMoveResult(genName, row, col, result)
   }
 
   private def processConnectionRequest(userName: String) = {
     val genName: String = generateName(userName)
-    val authToken: String = generateAuthToken(genName)
+    val authToken: String = Security.generateAuthToken(genName)
     val actor = sender()
 
     lazy val newMachine: FiniteStateMachine = new FiniteStateMachine()
@@ -75,7 +76,7 @@ class GameActor extends Actor {
     actor ! ArrangementFinishedConfirmation
 
     nextStep match {
-      case fsa.PlayerMove(_, currentPlayer, _) =>
+      case PlayerMoveState(_, currentPlayer, _) =>
         rivalActor(genName) ! GameStartNotification
         actor ! GameStartNotification
       case _ =>
@@ -85,23 +86,28 @@ class GameActor extends Actor {
   private def processPlayerMove(genName: String, row: Int, col: Int) = {
     val PlayerSession(_, _, fsm) = ownSession(genName)
 
-    fsm.op { case pm: fsa.PlayerMove => pm.next(genName) } match {
+    val newState = fsm.op { case pm: PlayerMoveState => pm.next(genName) }
+
+    newState match {
       case PlayerMoveResponseOp(players, _, _) =>
         val PlayerSession(_, rivalActor, _) = rivalSession(genName)
         rivalActor ! PlayerMoveConfirmation(row, col)
     }
   }
 
-  private def processPlayerMoveResult(genName: String, result: String) = {
+  private def processPlayerMoveResult(genName: String, row: Int, col: Int, result: String) = {
     val PlayerSession(_, ownActor, fsm) = ownSession(genName)
     val PlayerSession(_, rivalActor, _) = rivalSession(genName)
 
-    fsm.op { case pm: fsa.PlayerMoveResponseOp => pm.next(result == "k").next } match {
-      case fsa.PlayerMove(_, _, _) =>
+    val newState = fsm.op { case pm: PlayerMoveResponseOp => pm.next(result == "k").next }
+
+    newState match {
+      case PlayerMoveState(_, _, _) =>
+        rivalActor ! PlayerMoveResultConfirmation(row, col, result)
         ownActor ! YourTurnNotification
       case GameEnd(winner) =>
-        ownActor ! GameOverNotification
-        rivalActor ! GameOverNotification
+        ownActor ! GameOverNotification(winner)
+        rivalActor ! GameOverNotification(winner)
     }
   }
 
@@ -130,10 +136,6 @@ class GameActor extends Actor {
     case None => suggestedName
   }
 
-  /* TODO: change this method */
-  private def generateAuthToken(genName: String): String =
-    genName + "#auth_change_me"
-
   private def isValidAuth(genName: String, authToken: String): Boolean =
-    generateAuthToken(genName) == authToken
+    Security.generateAuthToken(genName) == authToken
 }

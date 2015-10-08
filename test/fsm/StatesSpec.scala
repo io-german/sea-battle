@@ -1,4 +1,4 @@
-package fsa
+package fsm
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
@@ -70,20 +70,20 @@ class StatesSpec extends PlaySpec {
         override def nextInt(n: Int): Int = 0
       }
       val initialState = ArrangementCond(players, true, true)
-      val expectedState = PlayerMove(players, 0)
+      val expectedState = PlayerMoveState(players, 0)
     }
   }
 
   "PlayerMove state" should {
     "produce PlayerMoveResponseOp state" in {
-      val initialState = PlayerMove(players, 0)
+      val initialState = PlayerMoveState(players, 0)
       val expectedState = PlayerMoveResponseOp(players, Seq(0, 0), 0)
 
       initialState.next("vasya") must be (expectedState)
     }
 
     "throw an exception if wrong player tries to move" in {
-      val initialState = PlayerMove(players, 0)
+      val initialState = PlayerMoveState(players, 0)
       a [RuntimeException] must be thrownBy initialState.next("petya")
     }
   }
@@ -114,14 +114,14 @@ class StatesSpec extends PlaySpec {
   "PlayerMoveResponseCond state" should {
     "produce PlayerMove state if game is not over yet and it was 1st player's move" in {
       val initialState = PlayerMoveResponseCond(players, Seq(0, 0), 0)
-      val expectedState = PlayerMove(players, 1, Seq(0, 0))
+      val expectedState = PlayerMoveState(players, 1, Seq(0, 0))
 
       initialState.next must be (expectedState)
     }
 
     "produce PlayerMove state if game is not over yet and it was 2st player's move" in {
       val initialState = PlayerMoveResponseCond(players, Seq(0, 0), 1)
-      val expectedState = PlayerMove(players, 0, Seq(0, 0))
+      val expectedState = PlayerMoveState(players, 0, Seq(0, 0))
 
       initialState.next must be (expectedState)
     }

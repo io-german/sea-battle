@@ -7,7 +7,7 @@ object MessageSerializer {
   def apply(msg: ServerMessage): String = (msg match {
     case ConnectionResponse(genName, authToken) => connectionResponse(genName, authToken)
     case PlayerMoveConfirmation(row, col) => playerMoveConfirmation(row, col)
-    case PlayerMoveResultConfirmation(genName, row, col, result) => playerMoveResultConfirmation(genName, row, col, result)
+    case PlayerMoveResultConfirmation(row, col, result) => playerMoveResultConfirmation(row, col, result)
     case GameOverNotification(winner) => gameOverNotification(winner)
     case other => Json.obj("message" -> other.message)
   }).toString()
@@ -22,9 +22,8 @@ object MessageSerializer {
     "row" -> row,
     "col" -> col)
 
-  private def playerMoveResultConfirmation(genName: String, row: Int, col: Int, result: String) = Json.obj(
+  private def playerMoveResultConfirmation(row: Int, col: Int, result: String) = Json.obj(
     "message" -> "player_move_result_confirmation",
-    "gen_name" -> genName,
     "row" -> row,
     "col" -> col,
     "result" -> result)

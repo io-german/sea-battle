@@ -1,4 +1,4 @@
-package fsa
+package fsm
 
 import scala.util.{Failure, Success, Try}
 
