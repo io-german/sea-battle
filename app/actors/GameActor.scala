@@ -76,9 +76,12 @@ class GameActor extends Actor {
     actor ! ArrangementFinishedConfirmation
 
     nextStep match {
-      case PlayerMoveState(_, currentPlayer, _) =>
+      case PlayerMoveState(players, currentPlayer, _) =>
+        val PlayerSession(_, firstPlayerActor, _) = ownSession(players(currentPlayer))
+
         rivalActor(genName) ! GameStartNotification
         actor ! GameStartNotification
+        firstPlayerActor ! YourTurnNotification
       case _ =>
     }
   }
