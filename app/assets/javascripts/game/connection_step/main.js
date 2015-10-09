@@ -1,4 +1,6 @@
+import { model as masterModel } from '../model.js';
 import Model from './model.js';
+import { pubsub } from '../../util/pubsub.js';
 import view from './view.js';
 
 export default function () {
@@ -8,6 +10,10 @@ export default function () {
       input = step.getElementsByTagName('input')[0];
 
   button.addEventListener('click', function () {
-    model.submit(input.value);
+    masterModel.comm.connect(input.value);
+  });
+
+  pubsub.subscribe('connection_response', function (data) {
+    model.submit(data.gen_name, data.auth);
   });
 }
