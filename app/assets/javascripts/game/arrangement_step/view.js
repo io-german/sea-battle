@@ -1,7 +1,7 @@
 import Canvas from '../../canvas/Canvas.js';
 import Rectangle from '../../canvas/primitives/Rectangle.js';
 
-import { drawMarkings, drawShips } from '../helper/canvas_routines.js';
+import { drawMarkings, drawShips } from '../../game_field/helper/canvas_routines.js';
 
 var GRID_SIZE = 25;
 
@@ -9,10 +9,19 @@ export default function (model) {
   var canvasElement = document.getElementById('arrangement-field'),
       canvas        = new Canvas(canvasElement);
 
+  displayCorrectBlock();
   canvas.clear();
   drawMarkings(canvas);
   drawShips(canvas, model.field);
   drawCurrentShip(canvas, model.currentPosition, model.valid);
+}
+
+function displayCorrectBlock () {
+  var steps = document.getElementsByClassName('step'),
+      arrangementBlock = document.getElementsByClassName('arrangement-step')[0];
+
+  Array.prototype.forEach.call(steps, (step) => step.style.display = 'none');
+  arrangementBlock.style.display = 'block';
 }
 
 function drawCurrentShip (canvas, currentPosition, valid) {

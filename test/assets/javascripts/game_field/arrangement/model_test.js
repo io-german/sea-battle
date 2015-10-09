@@ -1,6 +1,6 @@
 import '../../chai_initializer.js';
 import nop from '../../mock/nop.js';
-import Model from '../../../../../app/assets/javascripts/game_field/arrangement/model.js';
+import Model from '../../../../../app/assets/javascripts/game/arrangement_step/model.js';
 
 describe('Arrangement model', function () {
 

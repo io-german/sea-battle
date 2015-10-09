@@ -11,9 +11,7 @@ export default class WebsocketComm {
   constructor () {
     this.socket = websocket(url);
     this.socket.onmessage = function (e) {
-      var msg = JSON.parse(e.data);
-
-      pubsub.publish(msg.message, msg);
+      pubsub.publish(msg.message, JSON.parse(e.data));
     };
   }
 

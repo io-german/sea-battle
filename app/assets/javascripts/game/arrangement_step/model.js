@@ -1,4 +1,5 @@
-import createField from '../helper/create_field.js';
+import createField from '../../game_field/helper/create_field.js';
+import { model as masterModel } from '../model.js';
 import { pubsub } from '../../util/pubsub.js';
 import ShipPosition from './ShipPosition.js';
 
@@ -6,6 +7,8 @@ var ships = [ 1, 1, 1, 1, 2, 2, 2, 3, 3, 4 ];
 
 export default class {
   constructor (view) {
+    masterModel.currentStep = 'arrangement';
+
     this.view = view;
     this.field = createField();
     this.currentShip = 0;

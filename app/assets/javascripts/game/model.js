@@ -22,6 +22,7 @@ class Model {
   }
 
   set authToken (value) {
+    this.comm.auth = value;
     this._authToken = value;
     console.log(value);
   }
@@ -31,6 +32,7 @@ class Model {
   }
 
   set userName (value) {
+    this.comm.genName = value;
     this._userName = value;
     console.log(value);
   }

@@ -1,5 +1,5 @@
 import '../../chai_initializer.js';
-import ShipPosition from '../../../../../app/assets/javascripts/game_field/arrangement/ShipPosition.js';
+import ShipPosition from '../../../../../app/assets/javascripts/game/arrangement_step/ShipPosition.js';
 
 describe('ShipPosition', function () {
 
