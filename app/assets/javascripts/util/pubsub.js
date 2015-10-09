@@ -8,11 +8,19 @@ class PubSub {
   }
 
   subscribe (topic, callback) {
-    if (!this.listeners[topic]) {
-      this.listeners[topic] = [];
+    var listeners = this.listeners;
+
+    if (!listeners[topic]) {
+      listeners[topic] = [];
     }
 
-    this.listeners[topic].push(callback);
+    var index = listeners[topic].push(callback) - 1;
+
+    return {
+      remove: function () {
+        delete listeners[topic][index];
+      }
+    };
   }
 }
 

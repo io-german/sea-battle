@@ -9,8 +9,6 @@ export default class {
   }
 
   submit (userName, authToken) {
-    masterModel.userName = userName;
-    masterModel.authToken = authToken;
-    pubsub.publish('connection.successful');
+    pubsub.publish('connection.successful', { userName: userName, authToken: authToken });
   }
 }
