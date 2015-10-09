@@ -2,6 +2,8 @@ import ArrangementStep from './arrangement_step/main.js';
 import ConnectionStep from './connection_step/main.js';
 import { model } from './model.js';
 import { pubsub } from '../util/pubsub.js';
+import OwnMove from './own_move_step/main.js';
+import RivalMove from './rival_move_step/main.js';
 import WebsocketComm from './comm/WebsocketComm.js';
 //import gameOver from './game_over_step/main.js';
 //import own_move from './own_move_step/main.js';
@@ -10,26 +12,38 @@ import WebsocketComm from './comm/WebsocketComm.js';
 export default function () {
   model.comm = new WebsocketComm();
 
-  var connection = new ConnectionStep(),
-      arrangement = new ArrangementStep();
+  var currentState;
 
-  connection.subscribe();
+  changeState(ConnectionStep);
 
   pubsub.subscribe('connection.successful', function (data) {
     model.userName = data.userName;
     model.authToken = data.authToken;
-    connection.unsubscribe();
+    currentState.unsubscribe();
   });
 
   pubsub.subscribe('arrangement_start', function () {
-    arrangement.subscribe();
+    currentState = new ArrangementStep();
+    currentState.subscribe();
   });
 
   pubsub.subscribe('arrangement.finished', function (data) {
-    model.field = data;
+    model.ownField = data;
   });
 
   pubsub.subscribe('game_start', function () {
-    arrangement.unsubscribe();
+    changeState(RivalMove);
   });
+
+  pubsub.subscribe('your_move', function () {
+    changeState(OwnMove);
+  });
+
+  pubsub.subscribe('');
+
+  function changeState(state) {
+    currentState && currentState.unsubscribe();
+    currentState = new state();
+    currentState.subscribe();
+  }
 }

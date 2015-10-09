@@ -1,5 +1,10 @@
+import createField from '../game_field/helper/create_field.js';
+
 class Model {
-  constructor () {}
+  constructor () {
+    this.ownField = createField();
+    this.rivalField = createField();
+  }
 
   get currentStep () {
     return this._currentStep;
@@ -36,6 +41,7 @@ class Model {
     this._userName = value;
     console.log(value);
   }
+
 }
 
 export const model = new Model();
