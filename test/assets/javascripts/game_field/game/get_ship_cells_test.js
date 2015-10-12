@@ -1,5 +1,5 @@
-import getShipCells from '../../../../../app/assets/javascripts/game_field/game/get_ship_cells.js';
-import createField from '../../../../../app/assets/javascripts/game_field/helper/create_field.js';
+import getShipCells from '../../../../../app/assets/javascripts/game/helper/get_ship_cells.js';
+import createField from '../../../../../app/assets/javascripts/game/helper/create_field.js';
 import '../../chai_initializer.js';
 
 describe('getShipCells function', function () {

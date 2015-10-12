@@ -23,7 +23,7 @@ class MessageSerializerSpec extends PlaySpec {
       val message = RivalMove(2, 2)
       val expectedString =
         "{" +
-          "\"message\":\"player_move_confirmation\"," +
+          "\"message\":\"rival_move\"," +
           "\"row\":2," +
           "\"col\":2" +
         "}"

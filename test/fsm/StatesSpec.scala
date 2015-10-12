@@ -91,50 +91,50 @@ class StatesSpec extends PlaySpec {
   "PlayerMoveResponseOp state" should {
     "produce PlayerMoveResponseCond state with same amount of ships if ship was not killed" in {
       val initialState = PlayerMoveResponseOp(players, Seq(0, 0), 0)
-      val expectedState = PlayerMoveResponseCond(players, Seq(0, 0), 0)
+      val expectedState = PlayerMoveResponseCond(players, Seq(0, 0), 0, false)
 
-      initialState.next(false) must be (expectedState)
+      initialState.next("m") must be (expectedState)
     }
 
     "produce PlayerMoveResponseCond with increased amount of ships if ship was killed by 1st player" in {
       val initialState = PlayerMoveResponseOp(players, Seq(0, 0), 0)
-      val expectedState = PlayerMoveResponseCond(players, Seq(0, 1), 0)
+      val expectedState = PlayerMoveResponseCond(players, Seq(0, 1), 0, true)
 
-      initialState.next(true) must be (expectedState)
+      initialState.next("k") must be (expectedState)
     }
 
     "produce PlayerMoveResponseCond with increased amount of ships if ship was killed by 2nd player" in {
       val initialState = PlayerMoveResponseOp(players, Seq(0, 0), 1)
-      val expectedState = PlayerMoveResponseCond(players, Seq(1, 0), 1)
+      val expectedState = PlayerMoveResponseCond(players, Seq(1, 0), 1, true)
 
-      initialState.next(true) must be (expectedState)
+      initialState.next("k") must be (expectedState)
     }
   }
 
   "PlayerMoveResponseCond state" should {
     "produce PlayerMove state if game is not over yet and it was 1st player's move" in {
-      val initialState = PlayerMoveResponseCond(players, Seq(0, 0), 0)
+      val initialState = PlayerMoveResponseCond(players, Seq(0, 0), 0, false)
       val expectedState = PlayerMoveState(players, 1, Seq(0, 0))
 
       initialState.next must be (expectedState)
     }
 
     "produce PlayerMove state if game is not over yet and it was 2st player's move" in {
-      val initialState = PlayerMoveResponseCond(players, Seq(0, 0), 1)
+      val initialState = PlayerMoveResponseCond(players, Seq(0, 0), 1, false)
       val expectedState = PlayerMoveState(players, 0, Seq(0, 0))
 
       initialState.next must be (expectedState)
     }
 
     "produce GameEnd state if game is over and it was 1st player's move" in {
-      val initialState = PlayerMoveResponseCond(players, Seq(9, 10), 0)
+      val initialState = PlayerMoveResponseCond(players, Seq(9, 10), 0, true)
       val expectedState = GameEnd("vasya")
 
       initialState.next must be (expectedState)
     }
 
     "produce GameEnd state if game is over and it was 2st player's move" in {
-      val initialState = PlayerMoveResponseCond(players, Seq(10, 9), 1)
+      val initialState = PlayerMoveResponseCond(players, Seq(10, 9), 1, true)
       val expectedState = GameEnd("petya")
 
       initialState.next must be (expectedState)
