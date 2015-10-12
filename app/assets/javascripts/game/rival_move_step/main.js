@@ -5,12 +5,13 @@ import view from './view.js';
 
 export default class {
   subscribe () {
+    console.log('RIVAL_MOVE');
     var model = new Model(view);
 
     this.moveConfirmation = pubsub.subscribe('rival_move', function (data) {
       var row    = data.row,
           col    = data.col,
-          result = model.rivalShot(row, col);
+          result = model.rivalShot({ row: row, col: col });
 
       masterModel.comm.respondToMove(row, col, result);
     });

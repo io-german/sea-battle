@@ -6,16 +6,13 @@ import OwnMove from './own_move_step/main.js';
 import RivalMove from './rival_move_step/main.js';
 import WaitRivalResponse from './wait_rival_response_step/main.js';
 import WebsocketComm from './comm/WebsocketComm.js';
-//import gameOver from './game_over_step/main.js';
-//import own_move from './own_move_step/main.js';
-//import rival_move from './rival_move_step/main.js';
 
 export default function () {
   model.comm = new WebsocketComm();
 
   var currentState;
 
-  changeState(ConnectionStep);
+  changeState(ConnectionStep)();
 
   pubsub.subscribe('connection.successful', function (data) {
     model.userName = data.userName;
@@ -38,13 +35,17 @@ export default function () {
 
   pubsub.subscribe('player_move_confirmation', changeState(WaitRivalResponse));
 
-  pubsub.subscribe('rival_move', changeState(RivalMove));
+  pubsub.subscribe('rival_move_started', changeState(RivalMove));
+
+  pubsub.subscribe('game_over', function (data) {
+    console.log(`winner is ${data.winner}`);
+  });
 
   function changeState (State) {
     return function () {
       currentState && currentState.unsubscribe();
       currentState = new State();
       currentState.subscribe();
-    }
+    };
   }
 }
