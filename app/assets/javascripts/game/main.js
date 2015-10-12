@@ -2,9 +2,9 @@ import ArrangementStep from './arrangement_step/main.js';
 import ConnectionStep from './connection_step/main.js';
 import { model } from './model.js';
 import { pubsub } from '../util/pubsub.js';
-import OwnMove from './own_move_step/main.js';
-import RivalMove from './rival_move_step/main.js';
-import WaitRivalResponse from './wait_rival_response_step/main.js';
+import OwnMove from './turns/OwnTurn.js';
+import RivalTurn from './turns/RivalTurn.js';
+import WaitRivalResponse from './turns/WaitRivalResponse.js';
 import WebsocketComm from './comm/WebsocketComm.js';
 
 export default function () {
@@ -29,13 +29,13 @@ export default function () {
     model.ownField = data;
   });
 
-  pubsub.subscribe('game_start', changeState(RivalMove));
+  pubsub.subscribe('rival_turn', changeState(RivalTurn));
 
   pubsub.subscribe('your_turn', changeState(OwnMove));
 
   pubsub.subscribe('player_move_confirmation', changeState(WaitRivalResponse));
 
-  pubsub.subscribe('rival_move_started', changeState(RivalMove));
+  pubsub.subscribe('rival_move_started', changeState(RivalTurn));
 
   pubsub.subscribe('game_over', function (data) {
     console.log(`winner is ${data.winner}`);
@@ -43,7 +43,7 @@ export default function () {
 
   function changeState (State) {
     return function () {
-      currentState && currentState.unsubscribe();
+      currentState && currentState.unsubscribe && currentState.unsubscribe();
       currentState = new State();
       currentState.subscribe();
     };

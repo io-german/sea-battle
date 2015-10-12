@@ -1,8 +1,13 @@
+/* eslint no-new:0 */
 import { GRID_SIZE } from '../helper/constants.js';
 import { model as masterModel } from '../model.js';
+import Model from './model.js';
+import view from './view.js';
 
 export default class {
   subscribe () {
+    new Model(view);
+
     console.log('OWN_MOVE');
     document.getElementById('rival-field').addEventListener('click', clickHandler);
   }

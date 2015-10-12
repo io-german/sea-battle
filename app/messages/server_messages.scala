@@ -11,4 +11,5 @@ case object ArrangementStartNotification extends ServerMessage("arrangement_star
 case class GameOverNotification(winner: String) extends ServerMessage("game_over")
 case object GameStartNotification extends ServerMessage("game_start")
 case object PlayerMoveConfirmation extends ServerMessage("player_move_confirmation")
+case object RivalTurnNotification extends ServerMessage("rival_turn")
 case object YourTurnNotification extends ServerMessage("your_turn")

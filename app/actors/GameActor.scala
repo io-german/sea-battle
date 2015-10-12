@@ -61,65 +61,58 @@ class GameActor extends Actor {
     actor ! ConnectionResponse(genName, authToken)
 
     nextStage match {
-      case ArrangementOp(_, _, _) =>
-        rivalActor(genName) ! ArrangementStartNotification
-        actor ! ArrangementStartNotification
+      case ArrangementOp(_, _, _) => sendMessages(genName, ArrangementStartNotification)
       case _ =>
     }
   }
 
   private def processArrangementFinished(genName: String) = {
-    val PlayerSession(_, actor, fsm) = ownSession(genName)
+    val nextStep = getGameFsm(genName).op { case aop: ArrangementOp => aop.next(genName).next }
 
-    val nextStep = fsm.op { case aop: ArrangementOp => aop.next(genName).next }
-
-    actor ! ArrangementFinishedConfirmation
+    getOwnActor(genName) ! ArrangementFinishedConfirmation
 
     nextStep match {
       case PlayerMoveState(players, currentPlayer, _) =>
-        val PlayerSession(_, firstPlayerActor, _) = ownSession(players(currentPlayer))
-
-        rivalActor(genName) ! GameStartNotification
-        actor ! GameStartNotification
-        firstPlayerActor ! YourTurnNotification
+        sendMessages(genName, GameStartNotification)
+        sendMessages(players(currentPlayer), YourTurnNotification, RivalTurnNotification)
       case _ =>
     }
   }
 
   private def processPlayerMove(genName: String, row: Int, col: Int) = {
-    val PlayerSession(_, ownActor, fsm) = ownSession(genName)
-
-    val newState = fsm.op { case pm: PlayerMoveState => pm.next(genName) }
+    val newState = getGameFsm(genName).op { case pm: PlayerMoveState => pm.next(genName) }
 
     newState match {
       case PlayerMoveResponseOp(players, _, _) =>
-        val PlayerSession(_, rivalActor, _) = rivalSession(genName)
-        ownActor ! PlayerMoveConfirmation
-        rivalActor ! RivalMove(row, col)
+        sendMessages(genName, PlayerMoveConfirmation, RivalMove(row, col))
     }
   }
 
   private def processPlayerMoveResult(genName: String, row: Int, col: Int, result: String) = {
-    val PlayerSession(_, ownActor, fsm) = ownSession(genName)
-    val PlayerSession(_, rivalActor, _) = rivalSession(genName)
+    val newState = getGameFsm(genName).op { case pm: PlayerMoveResponseOp => pm.next(result).next }
 
-    val newState = fsm.op { case pm: PlayerMoveResponseOp => pm.next(result == "k").next }
+    getRivalActor(genName) ! PlayerMoveResultConfirmation(row, col, result)
 
     newState match {
-      case PlayerMoveState(_, _, _) =>
-        rivalActor ! PlayerMoveResultConfirmation(row, col, result)
-        ownActor ! YourTurnNotification
+      case PlayerMoveState(players, activePlayer, _) =>
+        sendMessages(players(activePlayer), YourTurnNotification, RivalTurnNotification)
       case GameEnd(winner) =>
-        ownActor ! GameOverNotification(winner)
-        rivalActor ! GameOverNotification(winner)
+        sendMessages(genName, GameOverNotification(winner))
     }
+  }
+
+  private def sendMessages(activePlayer: String, message: ServerMessage): Unit =
+    sendMessages(activePlayer, message, message)
+
+  private def sendMessages(activePlayer: String, ownMessage: ServerMessage, rivalMessage: ServerMessage): Unit = {
+    getOwnActor(activePlayer) ! ownMessage
+    getRivalActor(activePlayer) ! rivalMessage
   }
 
   private def findSessionWithoutPair: Option[(String, PlayerSession)] =
     sessions.find { case (_, session) => session.rival.isEmpty }
 
-  private def ownSession(genName: String): PlayerSession =
-    sessions(genName)
+  private def ownSession(genName: String): PlayerSession = sessions(genName)
 
   private def rivalSession(genName: String): PlayerSession = {
     val PlayerSession(rivalOpt, _, _) = ownSession(genName)
@@ -130,10 +123,11 @@ class GameActor extends Actor {
     }
   }
 
-  private def rivalActor(genName: String): ActorRef = {
-    val PlayerSession(_, actor, _) = rivalSession(genName)
-    actor
-  }
+  private def getOwnActor(genName: String): ActorRef = ownSession(genName).actor
+
+  private def getRivalActor(genName: String): ActorRef = rivalSession(genName).actor
+
+  private def getGameFsm(genName: String): FiniteStateMachine = ownSession(genName).fsm
 
   @tailrec private def generateName(suggestedName: String): String = sessions.get(suggestedName) match {
     case Some(_) => generateName(suggestedName + System.currentTimeMillis)

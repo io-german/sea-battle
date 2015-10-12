@@ -51,26 +51,27 @@ case class PlayerMoveState(players: Seq[String], currentPlayer: Int, deadShips: 
   }
 }
 
-case class PlayerMoveResponseOp(players: Seq[String], deadShips: Seq[Int], currentPlayer: Int) extends OperationVertex[Boolean, PlayerMoveResponseCond] {
-  override def next(shipKilled: Boolean): PlayerMoveResponseCond = {
+case class PlayerMoveResponseOp(players: Seq[String], deadShips: Seq[Int], currentPlayer: Int) extends OperationVertex[String, PlayerMoveResponseCond] {
+  override def next(shotResult: String): PlayerMoveResponseCond = {
     val opponentIndex = 1 - currentPlayer
     val opponentDeadShips = deadShips(opponentIndex)
-    val deadShipDiff = if (shipKilled) 1 else 0
+    val deadShipDiff = if (shotResult == "k") 1 else 0
     val newDeadShipCount = opponentDeadShips + deadShipDiff
     val newDeadShips = deadShips.patch(opponentIndex, Seq(newDeadShipCount), 1)
 
-    PlayerMoveResponseCond(players, newDeadShips, currentPlayer)
+    PlayerMoveResponseCond(players, newDeadShips, currentPlayer, shotResult != "m")
   }
 }
 
-case class PlayerMoveResponseCond(players: Seq[String], deadShips: Seq[Int], currentPlayer: Int) extends ConditionalVertex[GameEnd, PlayerMoveState] {
+case class PlayerMoveResponseCond(players: Seq[String], deadShips: Seq[Int], currentPlayer: Int, successfulShot: Boolean) extends ConditionalVertex[GameEnd, PlayerMoveState] {
   val opponentIndex = 1 - currentPlayer
+  val nextPlayer = if (successfulShot) currentPlayer else opponentIndex
 
   override def predicate: Boolean = deadShips(opponentIndex) == 10
 
   override def output1: GameEnd = GameEnd(players(currentPlayer))
 
-  override def output2: PlayerMoveState = PlayerMoveState(players, opponentIndex, deadShips)
+  override def output2: PlayerMoveState = PlayerMoveState(players, nextPlayer, deadShips)
 }
 
 case class GameEnd(winner: String) extends EndVertex
