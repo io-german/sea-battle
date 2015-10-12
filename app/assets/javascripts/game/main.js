@@ -41,9 +41,9 @@ export default function () {
 
   pubsub.subscribe('');
 
-  function changeState(state) {
+  function changeState (State) {
     currentState && currentState.unsubscribe();
-    currentState = new state();
+    currentState = new State();
     currentState.subscribe();
   }
 }
