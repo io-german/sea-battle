@@ -10,7 +10,7 @@ export default class {
   }
 
   ownShot (coord, result) {
-    var field = this.rival;
+    var field = this.field;
 
     field[ coord.row ][ coord.col ] = result === 'k' ? 'w' : result;
     if (result === 'k') {

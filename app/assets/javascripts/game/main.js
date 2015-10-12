@@ -4,6 +4,7 @@ import { model } from './model.js';
 import { pubsub } from '../util/pubsub.js';
 import OwnMove from './own_move_step/main.js';
 import RivalMove from './rival_move_step/main.js';
+import WaitRivalResponse from './wait_rival_response_step/main.js';
 import WebsocketComm from './comm/WebsocketComm.js';
 //import gameOver from './game_over_step/main.js';
 //import own_move from './own_move_step/main.js';
@@ -31,19 +32,19 @@ export default function () {
     model.ownField = data;
   });
 
-  pubsub.subscribe('game_start', function () {
-    changeState(RivalMove);
-  });
+  pubsub.subscribe('game_start', changeState(RivalMove));
 
-  pubsub.subscribe('your_turn', function () {
-    changeState(OwnMove);
-  });
+  pubsub.subscribe('your_turn', changeState(OwnMove));
 
-  pubsub.subscribe('');
+  pubsub.subscribe('player_move_confirmation', changeState(WaitRivalResponse));
+
+  pubsub.subscribe('rival_move', changeState(RivalMove));
 
   function changeState (State) {
-    currentState && currentState.unsubscribe();
-    currentState = new State();
-    currentState.subscribe();
+    return function () {
+      currentState && currentState.unsubscribe();
+      currentState = new State();
+      currentState.subscribe();
+    }
   }
 }
