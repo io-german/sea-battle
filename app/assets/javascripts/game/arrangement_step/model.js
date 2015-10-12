@@ -1,4 +1,4 @@
-import createField from '../../game_field/helper/create_field.js';
+import createField from '../helper/create_field.js';
 import { model as masterModel } from '../model.js';
 import { pubsub } from '../../util/pubsub.js';
 import ShipPosition from './ShipPosition.js';

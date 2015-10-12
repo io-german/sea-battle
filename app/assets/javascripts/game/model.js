@@ -1,4 +1,4 @@
-import createField from '../game_field/helper/create_field.js';
+import createField from './helper/create_field.js';
 
 class Model {
   constructor () {
