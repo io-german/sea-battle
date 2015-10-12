@@ -1,5 +1,5 @@
-import getShipNeighborCells from '../../game_field/game/get_ship_neighbor_cells.js';
-import getShipCells from '../../game_field/game/get_ship_cells.js';
+import getShipNeighborCells from '../helper/get_ship_neighbor_cells.js';
+import getShipCells from '../helper/get_ship_cells.js';
 import { model as masterModel } from '../model.js';
 
 export default class {

@@ -1,7 +1,7 @@
 import Canvas from '../../canvas/Canvas.js';
 import Rectangle from '../../canvas/primitives/Rectangle.js';
 
-import { drawMarkings, drawShips } from '../../game_field/helper/canvas_routines.js';
+import { drawMarkings, drawShips } from '../helper/canvas_routines.js';
 
 var GRID_SIZE = 25;
 
