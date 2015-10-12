@@ -87,14 +87,15 @@ class GameActor extends Actor {
   }
 
   private def processPlayerMove(genName: String, row: Int, col: Int) = {
-    val PlayerSession(_, _, fsm) = ownSession(genName)
+    val PlayerSession(_, ownActor, fsm) = ownSession(genName)
 
     val newState = fsm.op { case pm: PlayerMoveState => pm.next(genName) }
 
     newState match {
       case PlayerMoveResponseOp(players, _, _) =>
         val PlayerSession(_, rivalActor, _) = rivalSession(genName)
-        rivalActor ! PlayerMoveConfirmation(row, col)
+        ownActor ! PlayerMoveConfirmation
+        rivalActor ! RivalMove(row, col)
     }
   }
 

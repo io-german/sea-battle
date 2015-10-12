@@ -20,7 +20,7 @@ class MessageSerializerSpec extends PlaySpec {
     }
 
     "generate valid JSON for PlayerMoveConfirmation messages" in {
-      val message = PlayerMoveConfirmation(2, 2)
+      val message = RivalMove(2, 2)
       val expectedString =
         "{" +
           "\"message\":\"player_move_confirmation\"," +
