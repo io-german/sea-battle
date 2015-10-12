@@ -35,7 +35,7 @@ export default function () {
     changeState(RivalMove);
   });
 
-  pubsub.subscribe('your_move', function () {
+  pubsub.subscribe('your_turn', function () {
     changeState(OwnMove);
   });
 
