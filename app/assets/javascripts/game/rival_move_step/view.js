@@ -1,4 +1,5 @@
 import Canvas from '../../canvas/Canvas.js';
+import { drawMarkings, drawShips } from '../helper/canvas_routines.js';
 
 export default function (ownModel, rivalModel) {
   var own   = document.getElementById('own-field'),
