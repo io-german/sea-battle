@@ -5,7 +5,7 @@ import PlayerMoveResult from './PlayerMoveResult.js';
 import { pubsub } from '../../util/pubsub.js';
 import websocket from '../../websocket/main.js';
 
-var url = 'ws://localhost:9000/subscribe';
+var url = `ws://${window.location.hostname}:${window.location.port}/subscribe`;
 
 export default class WebsocketComm {
   constructor () {
