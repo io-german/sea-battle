@@ -1,5 +1,6 @@
 import { model as masterModel } from '../model.js';
 import Model from './model.js';
+import { pubsub } from '../../util/pubsub.js';
 import view from './view.js';
 
 export default class {
