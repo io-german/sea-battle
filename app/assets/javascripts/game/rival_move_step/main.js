@@ -7,7 +7,7 @@ export default class {
   subscribe () {
     var model = new Model(view);
 
-    this.moveConfirmation = pubsub.subscribe('player_move_confirmation', function (data) {
+    this.moveConfirmation = pubsub.subscribe('rival_move', function (data) {
       var row    = data.row,
           col    = data.col,
           result = model.rivalShot(row, col);
