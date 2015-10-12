@@ -1,5 +1,5 @@
 import Rectangle from '../../canvas/primitives/Rectangle.js';
-import { GRID_SIZE } from '../constants.js';
+import { GRID_SIZE } from '../helper/constants.js';
 
 export default function (canvas, row, col) {
   var cellLeft = (col + 1) * GRID_SIZE,
