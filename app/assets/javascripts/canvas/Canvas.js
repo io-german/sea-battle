@@ -13,16 +13,16 @@ export default class {
     _clear(this.context, this.canvas);
   }
 
-  line (from, to) {
-    _line(this.context, from, to);
+  line (from, to, color) {
+    this.withColor(color, () => _line(this.context, from, to));
   }
 
-  rectDiagonals (rect) {
-    _rectDiagonals(this.context, rect);
+  rectDiagonals (rect, color) {
+    this.withColor(color, () => _rectDiagonals(this.context, rect));
   }
 
   fillRect (rect, color) {
-    _fillRect(this.context, rect, color);
+    this.withColor(color, () => _fillRect(this.context, rect));
   }
 
   stroke () {
@@ -31,5 +31,17 @@ export default class {
 
   text (value, position) {
     this.context.fillText(value, position.x, position.y);
+  }
+
+  withColor (color, fn) {
+    var currentFillStyle = this.context.fillStyle;
+
+    if (color) {
+      this.context.fillStyle = color;
+    }
+
+    fn();
+
+    this.context.fillStyle = currentFillStyle;
   }
 }
