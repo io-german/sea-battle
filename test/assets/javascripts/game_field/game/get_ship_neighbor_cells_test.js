@@ -103,16 +103,16 @@ describe('getShipNeighborCells function', function () {
   it('should return 14 neighbors if currentCoord points a hull size 4 ship in the mid-field', function () {
     field[ 3 ][ 3 ] = field[ 4 ][ 3 ] = field[ 5 ][ 3 ] = field[ 6 ][ 3 ] = 's';
 
-    var neighbors = getShipNeighborCells(field, { row: 3, col: 5 });
+    var neighbors = getShipNeighborCells(field, { row: 5, col: 3 });
 
     neighbors.should.have.length(14);
-    neighbors.be.deep.equal([
+    neighbors.should.be.deep.equal([
       { row: 2, col: 2 }, { row: 2, col: 3 }, { row: 2, col: 4 },
       { row: 3, col: 2 }, { row: 3, col: 4 },
       { row: 4, col: 2 }, { row: 4, col: 4 },
       { row: 5, col: 2 }, { row: 5, col: 4 },
       { row: 6, col: 2 }, { row: 6, col: 4 },
-      { row: 7, col: 2 }, { row: 7, col: 6 }, { row: 7, col: 4 }
+      { row: 7, col: 2 }, { row: 7, col: 3 }, { row: 7, col: 4 }
     ]);
   })
 });
